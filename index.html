@@ -13,98 +13,94 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 0;
-            color: #2c3e50;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
             padding: 30px;
             border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        h2 { color: var(--primary-color); margin-bottom: 25px; font-size: 1.8rem; }
-
-        .input-box { margin-bottom: 20px; text-align: right; }
-        
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
-
-        input, select {
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             width: 100%;
-            padding: 14px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            outline: none;
-            background: #f9f9f9;
+            max-width: 420px;
+            text-align: center;
+            transition: all 0.4s ease;
         }
 
-        input:focus { border-color: var(--primary-color); background: #fff; }
+        h2 { color: var(--primary-color); margin-bottom: 25px; font-size: 1.6rem; }
+
+        .input-box { margin-bottom: 15px; text-align: right; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 0.95rem; }
+        input, select { 
+            width: 100%; padding: 14px; border: 2px solid #eee; 
+            border-radius: 12px; font-size: 1rem; box-sizing: border-box;
+            outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary-color); }
 
         .btn-calc {
             background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 16px;
-            width: 100%;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.3s;
-            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            color: white; border: none; padding: 16px;
+            width: 100%; border-radius: 12px; font-size: 1.2rem;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
         }
-
-        .btn-calc:active { transform: scale(0.98); }
+        .btn-calc:hover { opacity: 0.9; transform: translateY(-2px); }
 
         #result-box {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 15px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-            font-weight: 500;
+            margin-top: 25px; padding: 20px; border-radius: 15px;
+            display: none; animation: slideUp 0.5s ease;
+            font-size: 1.1rem;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .status-success { background: #e8f5e9; border: 2px solid #2ecc71; color: #1b5e20; }
         .status-info { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; }
 
-        .footer { margin-top: 25px; font-size: 0.9rem; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .footer b { color: #f1c40f; }
+        /* حقوق الملكية في أسفل المنتصف */
+        .footer-credit {
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-credit b { color: #f1c40f; }
 
-        /* تغيير الألوان بناءً على النوع */
-        .gold-theme { border-top: 8px solid var(--gold-color); }
-        .silver-theme { border-top: 8px solid var(--silver-color); }
-        .money-theme { border-top: 8px solid var(--primary-color); }
+        /* تأثيرات الألوان */
+        .gold-theme { border-top: 10px solid var(--gold-color); }
+        .silver-theme { border-top: 10px solid var(--silver-color); }
+        .money-theme { border-top: 10px solid var(--primary-color); }
     </style>
 </head>
 <body>
 
 <div class="container money-theme" id="mainCard">
-    <h2>✨ حاسبة الزكاة الشاملة</h2>
+    <h2>🕌 حاسبة الزكاة الشاملة</h2>
     
     <div class="input-box">
-        <label>سعر الذهب (عيار 24) اليوم بالريال:</label>
-        <input type="number" id="goldPrice" value="340" placeholder="مثال: 345">
+        <label>سعر الذهب (24) اليوم بالريال:</label>
+        <input type="number" id="goldPrice" value="340">
     </div>
 
     <div class="input-box">
-        <label>ماذا تريد أن تحسب؟</label>
+        <label>نوع الزكاة المراد حسابها:</label>
         <select id="zakatType" onchange="changeTheme()">
             <option value="money">زكاة المال والنقود</option>
             <option value="gold">زكاة الذهب</option>
@@ -114,16 +110,16 @@
 
     <div class="input-box">
         <label id="valueLabel">المبلغ الإجمالي بالريال:</label>
-        <input type="number" id="userValue" placeholder="أدخل القيمة هنا">
+        <input type="number" id="userValue" placeholder="أدخل هنا">
     </div>
 
-    <button class="btn-calc" onclick="calculate()">احسب الآن</button>
+    <button class="btn-calc" onclick="calculate()">احسب الزكاة</button>
 
     <div id="result-box"></div>
 </div>
 
-<div class="footer">
-    تم التطوير بواسطة: <b>أ. أحمد سعيد</b> &copy; 2026
+<div class="footer-credit">
+    إعداد: <b>أ. أحمد سعيد</b> &copy; 2026
 </div>
 
 <script>
@@ -132,17 +128,16 @@
         const card = document.getElementById('mainCard');
         const label = document.getElementById('valueLabel');
         const btn = document.querySelector('.btn-calc');
-
         card.className = 'container ' + type + '-theme';
         
         if(type === 'money') {
             label.innerText = "المبلغ الإجمالي بالريال:";
             btn.style.background = "#27ae60";
         } else if(type === 'gold') {
-            label.innerText = "وزن الذهب بالجرام:";
+            label.innerText = "الوزن الإجمالي بالجرام:";
             btn.style.background = "#d4af37";
         } else {
-            label.innerText = "وزن الفضة بالجرام:";
+            label.innerText = "الوزن الإجمالي بالجرام:";
             btn.style.background = "#95a5a6";
         }
         document.getElementById('result-box').style.display = 'none';
@@ -150,36 +145,24 @@
 
     function calculate() {
         const type = document.getElementById('zakatType').value;
-        const goldPrice = parseFloat(document.getElementById('goldPrice').value);
+        const gp = parseFloat(document.getElementById('goldPrice').value);
         const val = parseFloat(document.getElementById('userValue').value);
         const resBox = document.getElementById('result-box');
 
-        if(!val || !goldPrice) { alert("لطفاً أدخل القيم المطلوبة"); return; }
+        if(!val || !gp) return;
 
-        let nisab = 0;
+        let nisab = (type === 'money') ? gp * 85 : (type === 'gold' ? 85 : 595);
         let zakat = val * 0.025;
-        let isEligible = false;
         let unit = (type === 'money') ? 'ريال' : 'جرام';
 
-        if(type === 'money') {
-            nisab = goldPrice * 85;
-            isEligible = val >= nisab;
-        } else if(type === 'gold') {
-            nisab = 85;
-            isEligible = val >= nisab;
-        } else {
-            nisab = 595;
-            isEligible = val >= nisab;
-        }
-
         resBox.style.display = 'block';
-        if(isEligible) {
+        if(val >= nisab) {
             resBox.className = 'status-success';
-            resBox.innerHTML = `✅ <b>تجب الزكاة</b><br>مقدار الزكاة المستحقة هو:<br><span style="font-size: 1.5rem;">${zakat.toLocaleString()} ${unit}</span>`;
+            resBox.innerHTML = `✅ <b>تجب الزكاة</b><br>المقدار: <b>${zakat.toFixed(2)} ${unit}</b>`;
         } else {
             resBox.className = 'status-info';
-            let diff = (type === 'money') ? `<br>يتبقى لك <b>${Math.round(nisab - val)} ريال</b> لتصل للنصاب.` : "";
-            resBox.innerHTML = `⚠️ <b>لم تبلغ النصاب الشرعي</b>${diff}<br>(نصابك هو ${Math.round(nisab)} ${unit})`;
+            let diff = (type === 'money') ? `<br>باقي لك <b>${Math.round(nisab - val)} ريال</b> لتصل للنصاب.` : "";
+            resBox.innerHTML = `⚠️ <b>لم تبلغ النصاب</b>${diff}`;
         }
     }
 </script>

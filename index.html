@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الزكاة الذكية | أ. أحمد سعيد</title>
+    <title>حاسبة الزكاة | أ. أحمد سعيد</title>
     <style>
         :root {
             --primary: #2c3e50;
             --accent: #27ae60;
-            --info: #2980b9;
             --bg: #f4f7f6;
         }
 
@@ -22,21 +21,15 @@
         .card {
             background: #fff;
             max-width: 480px; width: 100%;
-            padding: 30px; border-radius: 15px;
+            padding: 25px; border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             border-top: 6px solid var(--accent);
         }
 
         h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
 
-        .price-tag {
-            background: #eef2f3; padding: 10px;
-            border-radius: 8px; font-size: 0.85rem;
-            margin-bottom: 20px; text-align: center; color: #555;
-        }
-
         .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 7px; font-weight: 600; }
+        label { display: block; margin-bottom: 7px; font-weight: 600; font-size: 0.9rem; }
 
         input, select {
             width: 100%; padding: 12px;
@@ -47,24 +40,24 @@
 
         input:focus { border-color: var(--accent); }
 
+        .price-manual {
+            background: #fffdf0; padding: 15px;
+            border-radius: 10px; border: 1px dashed #d4af37;
+            margin-bottom: 20px;
+        }
+
         button {
             width: 100%; padding: 15px;
             background: var(--accent); color: white;
             border: none; border-radius: 8px;
             font-size: 1.1rem; cursor: pointer; font-weight: bold;
-            transition: 0.3s;
         }
-
-        button:hover { background: #219150; }
 
         #result {
             margin-top: 20px; padding: 15px;
             border-radius: 8px; display: none;
-            line-height: 1.6; text-align: center;
-            animation: slideIn 0.3s ease-out;
+            text-align: center; line-height: 1.6;
         }
-
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
         .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
@@ -73,69 +66,56 @@
             margin-top: 30px; text-align: center;
             font-size: 0.95rem; color: #7f8c8d;
         }
-        
-        .author-name { color: var(--primary); font-weight: bold; }
+        .author { color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>حاسبة الزكاة الذكية</h2>
-    
-    <div id="priceInfo" class="price-tag">جاري تحديث أسعار السوق المباشرة...</div>
+    <h2>حاسبة الزكاة المبسطة</h2>
+
+    <div class="price-manual">
+        <label>سعر جرام الذهب اليوم (عيار 24)</label>
+        <input type="number" id="goldPriceInput" placeholder="مثال: 345" value="340">
+        <small style="color: #856404; font-size: 0.75rem;">* ضروري لتحديد نصاب المال بدقة</small>
+    </div>
 
     <div class="input-group">
         <label>نوع الوعاء الزكوي</label>
-        <select id="type" onchange="toggleInputs()">
+        <select id="zakatType" onchange="updateUI()">
             <option value="money">المال النقدي (ريال)</option>
-            <option value="gold">الذهب</option>
-            <option value="silver">الفضة</option>
+            <option value="gold">الذهب (جرام)</option>
+            <option value="silver">الفضة (جرام)</option>
         </select>
     </div>
 
     <div class="input-group">
         <label id="mainLabel">المبلغ الإجمالي (ريال)</label>
-        <input type="number" id="val" placeholder="أدخل القيمة هنا">
+        <input type="number" id="mainValue" placeholder="أدخل القيمة هنا">
     </div>
 
-    <div id="goldGroup" class="input-group" style="display:none;">
-        <label>العيار</label>
+    <div id="goldKaratGroup" class="input-group" style="display:none;">
+        <label>عيار الذهب</label>
         <select id="karat">
-            <option value="24">عيار 24 (صافي)</option>
+            <option value="24">عيار 24</option>
             <option value="21">عيار 21</option>
             <option value="18">عيار 18</option>
         </select>
     </div>
 
-    <button onclick="process()">احسب الزكاة الواجبة</button>
+    <button onclick="calculateZakat()">احسب الزكاة</button>
 
     <div id="result"></div>
 </div>
 
 <footer>
-    إعداد: <span class="author-name">أ. أحمد سعيد</span> &copy; 2026
+    إعداد: <span class="author">أ. أحمد سعيد</span> &copy; 2026
 </footer>
 
 <script>
-    let goldPrice = 340; // سعر افتراضي احتياطي
-
-    // جلب الأسعار المباشرة من الـ API
-    async function getPrices() {
-        try {
-            const res = await fetch('https://api.gold-api.com/status');
-            const data = await res.json();
-            if(data.gold) {
-                goldPrice = data.gold;
-                document.getElementById('priceInfo').innerText = `سعر الذهب الحالي (24K): ${goldPrice.toFixed(2)} ريال للجرام`;
-            }
-        } catch(e) {
-            document.getElementById('priceInfo').innerText = "يعمل حالياً بالأسعار التقريبية بالسوق";
-        }
-    }
-
-    function toggleInputs() {
-        const type = document.getElementById('type').value;
-        const goldGroup = document.getElementById('goldGroup');
+    function updateUI() {
+        const type = document.getElementById('zakatType').value;
+        const goldGroup = document.getElementById('goldKaratGroup');
         const mainLabel = document.getElementById('mainLabel');
         
         goldGroup.style.display = (type === 'gold') ? 'block' : 'none';
@@ -143,57 +123,60 @@
         document.getElementById('result').style.display = 'none';
     }
 
-    function process() {
-        const type = document.getElementById('type').value;
-        const inputVal = parseFloat(document.getElementById('val').value);
+    function calculateZakat() {
+        const type = document.getElementById('zakatType').value;
+        const amount = parseFloat(document.getElementById('mainValue').value);
+        const goldPrice = parseFloat(document.getElementById('goldPriceInput').value);
         const resDiv = document.getElementById('result');
-        const nisabCash = goldPrice * 85; // النصاب الشرعي بناءً على سعر اليوم
         
-        if(!inputVal || inputVal <= 0) {
-            alert("يرجى إدخال قيمة صحيحة");
+        if (!amount || !goldPrice) {
+            alert("يرجى إدخال القيم المطلوبة");
             return;
         }
 
-        resDiv.style.display = 'block';
+        const nisabMoney = goldPrice * 85; 
         let zakat = 0;
+        let eligible = false;
+        let message = "";
 
-        if(type === 'money') {
-            if(inputVal >= nisabCash) {
-                zakat = inputVal * 0.025;
-                resDiv.className = 'alert-success';
-                resDiv.innerHTML = `<strong>تجب الزكاة</strong><br>المقدار الواجب إخراجه: <h3 style="margin:5px 0;">${zakat.toFixed(2)} ريال</h3>`;
+        resDiv.style.display = 'block';
+
+        if (type === 'money') {
+            if (amount >= nisabMoney) {
+                zakat = amount * 0.025;
+                eligible = true;
+                message = `تجب الزكاة: <strong>${zakat.toFixed(2)} ريال</strong>`;
             } else {
-                let diff = nisabCash - inputVal;
-                resDiv.className = 'alert-info';
-                resDiv.innerHTML = `<strong>لم تبلغ النصاب</strong><br>نصاب المال لليوم هو: <b>${Math.round(nisabCash).toLocaleString()} ريال</b><br>يتبقى لك <b>${Math.round(diff).toLocaleString()} ريال</b> للوصول للنصاب.`;
+                let diff = nisabMoney - amount;
+                message = `لم تبلغ النصاب (${Math.round(nisabMoney)} ريال).<br>يتبقى لك <b>${Math.round(diff)} ريال</b> لتجب الزكاة.`;
             }
-        } else if(type === 'gold') {
+        } 
+        else if (type === 'gold') {
             const k = parseInt(document.getElementById('karat').value);
-            const pure = (inputVal * k) / 24;
-            if(pure >= 85) {
-                zakat = inputVal * 0.025;
-                resDiv.className = 'alert-success';
-                resDiv.innerHTML = `<strong>تجب الزكاة</strong><br>المقدار: <b>${zakat.toFixed(2)} جرام</b> من الذهب عيار ${k}`;
+            const pureWeight = (amount * k) / 24;
+            if (pureWeight >= 85) {
+                zakat = amount * 0.025;
+                eligible = true;
+                message = `تجب الزكاة: <strong>${zakat.toFixed(2)} جرام</strong> من عيار ${k}`;
             } else {
-                let diffGold = 85 - pure;
-                resDiv.className = 'alert-info';
-                resDiv.innerHTML = `لم يبلغ النصاب (85 جرام ذهب صافي).<br>يتبقى لك ما يعادل <b>${diffGold.toFixed(2)} جرام</b> ذهب صافي.`;
+                message = "الوزن أقل من النصاب الشرعي (85 جرام ذهب صافي).";
             }
-        } else {
-            if(inputVal >= 595) {
-                zakat = inputVal * 0.025;
-                resDiv.className = 'alert-success';
-                resDiv.innerHTML = `<strong>تجب الزكاة</strong><br>المقدار: <b>${zakat.toFixed(2)} جرام</b> من الفضة`;
+        } 
+        else if (type === 'silver') {
+            if (amount >= 595) {
+                zakat = amount * 0.025;
+                eligible = true;
+                message = `تجب الزكاة: <strong>${zakat.toFixed(2)} جرام</strong> من الفضة`;
             } else {
-                let diffSilver = 595 - inputVal;
-                resDiv.className = 'alert-info';
-                resDiv.innerHTML = `لم يبلغ النصاب (595 جرام).<br>يتبقى لك <b>${diffSilver.toFixed(1)} جرام</b> لتجب الزكاة.`;
+                message = "الوزن أقل من النصاب الشرعي (595 جرام).";
             }
         }
-    }
 
-    getPrices();
+        resDiv.className = eligible ? 'alert-success' : 'alert-info';
+        resDiv.innerHTML = message;
+    }
 </script>
 
 </body>
 </html>
+

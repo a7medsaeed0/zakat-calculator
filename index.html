@@ -5,56 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حاسبة الزكاة | أ. أحمد سعيد</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: #fff; max-width: 400px; width: 100%; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 5px solid #27ae60; }
-        h2 { text-align: center; color: #2c3e50; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #27ae60; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        #result { margin-top: 15px; padding: 15px; border-radius: 8px; display: none; text-align: center; line-height: 1.6; }
-        .info { background: #d1ecf1; color: #0c5460; }
-        .success { background: #d4edda; color: #155724; }
-        footer { margin-top: 20px; color: #888; font-size: 0.9rem; }
+        :root { --p: #1a5d1a; --g: #d4af37; --s: #7f8c8d; --bg: #f8f9fa; }
+        body { font-family: sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border-top: 6px solid var(--p); }
+        h2 { text-align: center; color: var(--p); margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: var(--p); color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        #res { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; text-align: center; line-height: 1.6; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        footer { margin-top: 30px; color: #666; font-size: 0.9rem; text-align: center; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>حاسبة الزكاة</h2>
-        <label>سعر جرام الذهب (24) اليوم:</label>
+        <h2>حاسبة الزكاة الشاملة</h2>
+        
+        <label>سعر جرام الذهب (ع24) اليوم:</label>
         <input type="number" id="gp" value="340">
-        <select id="typ" onchange="document.getElementById('res').style.display='none'">
-            <option value="m">المال النقدي (ريال)</option>
-            <option value="g">الذهب (جرام)</option>
+
+        <label>نوع الزكاة:</label>
+        <select id="typ" onchange="update()">
+            <option value="m">زكاة المال (ريال)</option>
+            <option value="g">زكاة الذهب (جرام)</option>
+            <option value="s">زكاة الفضة (جرام)</option>
         </select>
+
+        <label id="lbl">المبلغ الإجمالي:</label>
         <input type="number" id="val" placeholder="أدخل القيمة هنا">
-        <button onclick="calc()">احسب الزكاة</button>
+
+        <button onclick="calc()">احسب الآن</button>
         <div id="res"></div>
     </div>
-    <footer>إعداد: أ. أحمد سعيد &copy; 2026</footer>
+    <footer>إعداد: <b>أ. أحمد سعيد</b> &copy; 2026</footer>
+
     <script>
-        function calc(){
+        function update() {
+            const t = document.getElementById('typ').value;
+            const lbl = document.getElementById('lbl');
+            lbl.innerText = (t === 'm') ? "المبلغ الإجمالي (ريال):" : "الوزن الإجمالي (جرام):";
+            document.getElementById('res').style.display = 'none';
+        }
+
+        function calc() {
             const gp = parseFloat(document.getElementById('gp').value);
             const v = parseFloat(document.getElementById('val').value);
             const t = document.getElementById('typ').value;
             const res = document.getElementById('res');
-            const nisab = gp * 85;
-            if(!v || !gp) return;
+            
+            if(!v || !gp) { alert("يرجى إكمال البيانات"); return; }
+            
             res.style.display = 'block';
-            if(t=='m'){
-                if(v >= nisab){
-                    res.className = 'success';
-                    res.innerHTML = `تجب الزكاة: <b>${(v*0.025).toFixed(2)} ريال</b>`;
-                } else {
-                    res.className = 'info';
-                    res.innerHTML = `لم تبلغ النصاب (${Math.round(nisab)} ريال).<br>يتبقى لك <b>${Math.round(nisab-v)} ريال</b>.`;
-                }
+            let nisab = (t === 'm') ? gp * 85 : (t === 'g' ? 85 : 595);
+            let zakat = v * 0.025;
+
+            if (v >= nisab) {
+                res.className = 'success';
+                res.innerHTML = `تجب الزكاة<br>المقدار: <b>${zakat.toFixed(2)} ${t === 'm' ? 'ريال' : 'جرام'}</b>`;
             } else {
-                if(v >= 85){
-                    res.className = 'success';
-                    res.innerHTML = `تجب الزكاة: <b>${(v*0.025).toFixed(2)} جرام</b>`;
-                } else {
-                    res.className = 'info';
-                    res.innerHTML = `أقل من النصاب الشرعي (85 جرام).`;
-                }
+                res.className = 'info';
+                let msg = (t === 'm') ? `باقي لك <b>${Math.round(nisab-v)} ريال</b> لتصل للنصاب` : `لم تصل للنصاب الشرعي`;
+                res.innerHTML = msg;
             }
         }
     </script>
